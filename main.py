@@ -15,16 +15,27 @@ server_socket.listen(1)
 print(f'Servidor escutando em {host}:{port}')
 
 while True:
-    # Aceitar uma nova conexão
-    client_socket, client_address = server_socket.accept()
-    print(f'Conexão recebida de {client_address}')
+    try:
+        # Aceitar uma nova conexão
+        client_socket, client_address = server_socket.accept()
+        print(f'Conexão recebida de {client_address}')
 
-    # Receber a mensagem do cliente (ESP32)
-    data = client_socket.recv(1024).decode('utf-8')
-    if data:
-        print(f'Mensagem recebida: {data}')
-        # Enviar uma resposta ao ESP32 (opcional)
-        client_socket.sendall(b'Recebido com sucesso\n')
+        while True:
+            # Receber os dados do ESP32
+            data = client_socket.recv(1024).decode('utf-8')
+            if not data:
+                break
 
-    # Fechar a conexão
-    client_socket.close()
+            # Exibir os dados recebidos
+            print(f'Dados recebidos: {data}')
+
+        # Fechar a conexão
+        client_socket.close()
+        print("Conexão encerrada.")
+
+    except KeyboardInterrupt:
+        print("Servidor encerrado pelo usuário.")
+        break
+
+# Fechar o socket do servidor
+server_socket.close()
