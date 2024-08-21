@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle PID e Tempo</title>
+</head>
+<body>
+    <h1>Controle PID e Tempo</h1>
+    
+    <form id="valorForm">
+        <label for="kpInput">Kp:</label>
+        <input type="number" id="kpInput" readonly>
+        <button type="button" onclick="salvarValor('kp')">Salvar Kp</button><br><br>
+
+        <label for="kdInput">Kd:</label>
+        <input type="number" id="kdInput" readonly>
+        <button type="button" onclick="salvarValor('kd')">Salvar Kd</button><br><br>
+
+        <label for="kiInput">Ki:</label>
+        <input type="number" id="kiInput" readonly>
+        <button type="button" onclick="salvarValor('ki')">Salvar Ki</button><br><br>
+
+        <label for="tempoInput">Tempo:</label>
+        <input type="number" id="tempoInput" step="0.1"><br><br>
+
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script>
+        // Função para buscar os valores mais recentes do servidor Flask
+        async function atualizarPotenciometro() {
+            const response = await fetch('/atualizar-potenciometro');
+            const data = await response.json();
+            document.getElementById('kpInput').value = data.valor || 0;
+            document.getElementById('kdInput').value = data.valor || 0;
+            document.getElementById('kiInput').value = data.valor || 0;
+        }
+
+        // Função para salvar o valor atual do potenciômetro para Kp, Kd ou Ki
+        async function salvarValor(tipo) {
+            const valor = document.getElementById(tipo + 'Input').value;
+            await fetch(`/salvar-${tipo}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ valor: valor }),
+            });
+            alert(`${tipo.toUpperCase()} salvo com sucesso!`);
+        }
+
+        // Enviar os valores dos inputs ao servidor TCP ao clicar em "Enviar"
+        document.getElementById('valorForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const tempo = document.getElementById('tempoInput').value;
+            
+            const response = await fetch('/enviar-valores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ tempo }),
+            });
+
+            const data = await response.json();
+            alert(data.mensagem + '\n' + data.resposta);
+        });
+
+        // Atualizar os inputs com o valor do potenciômetro a cada 1 segundo
+        setInterval(atualizarPotenciometro, 1000);
+
+        // Atualizar o input assim que a página for carregada
+        window.onload = atualizarPotenciometro;
+    </script>
+</body>
+</html>
