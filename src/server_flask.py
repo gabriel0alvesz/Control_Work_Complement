@@ -7,8 +7,11 @@ app = Flask(__name__)
 kp = 0
 kd = 0
 ki = 0
+tau = 0.0
+qsi = 0.0
 tempo = 0.0
-valor_potenciometro = 0  
+modo_operacao = "continua"
+valor_potenciometro = 0  # Variável para armazenar o valor do potenciômetro recebido do ESP32
 
 @app.route('/')
 def index():
@@ -45,17 +48,21 @@ def salvar_ki():
 
 @app.route('/enviar-valores', methods=['POST'])
 def enviar_valores():
-    global kp, kd, ki, tempo
+    global kp, kd, ki, tau, qsi, tempo, modo_operacao
+    modo_operacao = request.json.get('modo')
     tempo = request.json.get('tempo')
+    tau = request.json.get('tau')
+    qsi = request.json.get('qsi')
 
-    # Configurações do servidor TCP 
+    # Configurações do servidor TCP (o mesmo que o servidor_tcp.py)
     tcp_server_host = '127.0.0.1'
     tcp_server_port = 3333
 
     # Conectar ao servidor TCP e enviar os valores
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((tcp_server_host, tcp_server_port))
-        message = f"Kp: {kp}, Kd: {kd}, Ki: {ki}, Tempo: {tempo}\n"
+        message = (f"Modo: {modo_operacao}, Kp: {kp}, Kd: {kd}, Ki: {ki}, "
+                   f"Tau: {tau}, Qsi: {qsi}, Tempo: {tempo}\n")
         s.sendall(message.encode('utf-8'))
         data = s.recv(1024).decode('utf-8')
 
