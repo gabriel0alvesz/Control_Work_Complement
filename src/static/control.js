@@ -39,18 +39,60 @@ function enviarValores() {
         }),
         success: function(response) {
             var valores = `
-                Modo: ${response.modo}<br>
-                Tempo: ${response.tempo}<br>
-                Tau: ${response.tau}<br>
-                Qsi: ${response.qsi}<br>
+                Modo: ${modo}<br>
+                Tempo: ${tempo}<br>
+                Tau: ${tau}<br>
+                Qsi: ${qsi}<br>
                 Kp: ${response.kp}<br>
                 Kd: ${response.kd}<br>
                 Ki: ${response.ki}
             `;
             document.getElementById("valores").innerHTML = valores;
+            plotarGraficos(response);
             alert('Valores enviados e salvos com sucesso!');
         }
     });
+}
+
+function plotarGraficos(data) {
+    // Plotar gráfico de Bode
+    var trace1 = {
+        x: data.bode.frequencias,
+        y: data.bode.magnitude,
+        mode: 'lines',
+        name: 'Magnitude'
+    };
+
+    var trace2 = {
+        x: data.bode.frequencias,
+        y: data.bode.fase,
+        mode: 'lines',
+        name: 'Fase'
+    };
+
+    var layout1 = {
+        title: 'Gráfico de Bode',
+        xaxis: { title: 'Frequência (rad/s)' },
+        yaxis: { title: 'Magnitude (dB) / Fase (°)' }
+    };
+
+    Plotly.newPlot('bodePlot', [trace1, trace2], layout1);
+
+    // Plotar gráfico de resposta ao degrau
+    var trace3 = {
+        x: data.degrau.tempo,
+        y: data.degrau.resposta,
+        mode: 'lines',
+        name: 'Resposta ao Degrau'
+    };
+
+    var layout2 = {
+        title: 'Resposta ao Degrau',
+        xaxis: { title: 'Tempo (s)' },
+        yaxis: { title: 'Resposta' }
+    };
+
+    Plotly.newPlot('degrauPlot', [trace3], layout2);
 }
 
 function atualizarPotenciometro() {
