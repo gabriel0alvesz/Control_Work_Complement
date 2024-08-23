@@ -24,8 +24,8 @@ Sabemos que um sinal quando é lido por um microprocessador ocorre um processo d
 - [x] Potenciometro conectando no servidor
 - [x] Envio de Dados para o servidor
 - [ ] Aceitar comunicação via teclado matricial
-- [ ] inputs de *TAU* e *qsi*
-- [ ] Escolha entre continuo ou digital
+- [x] inputs de *TAU* e *qsi*
+- [x] Escolha entre continuo ou digital
 
 ### 2ª Parte
 - [ ] Gerar pontos para plotagem dos gráficos 
