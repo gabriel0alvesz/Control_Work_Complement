@@ -11,7 +11,7 @@ tau = 0.0
 qsi = 0.0
 tempo = 0.0
 modo_operacao = "continua"
-valor_potenciometro = 0  # Variável para armazenar o valor do potenciômetro recebido do ESP32
+valor_corrigido = 0
 
 @app.route('/')
 def index():
@@ -19,14 +19,15 @@ def index():
 
 @app.route('/atualizar-potenciometro', methods=['GET'])
 def atualizar_potenciometro():
-    global valor_potenciometro
-    return jsonify({'valor': valor_potenciometro})
+    global valor_corrigido
+    return jsonify({'valor': valor_corrigido})
 
 @app.route('/receber-potenciometro', methods=['POST'])
 def receber_potenciometro():
-    global valor_potenciometro
+    global valor_corrigido
     valor_potenciometro = request.json.get('valor')
-    return jsonify({'status': 'ok', 'valor_recebido': valor_potenciometro})
+    valor_corrigido = round(valor_potenciometro / 4095, 3)
+    return jsonify({'status': 'ok', 'valor_recebido': valor_corrigido})
 
 @app.route('/salvar-kp', methods=['POST'])
 def salvar_kp():
