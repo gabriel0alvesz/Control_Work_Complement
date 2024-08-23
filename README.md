@@ -20,20 +20,23 @@ Sabemos que um sinal quando é lido por um microprocessador ocorre um processo d
 ---
 ### 1ª Parte
 - [x] Criar servidor Flask
-- [x] Cria servidor comum via Socket - Middleware para plotagem
 - [x] Potenciometro conectando no servidor
-- [x] Envio de Dados para o servidor
 - [ ] Aceitar comunicação via teclado matricial
 - [x] inputs de *TAU* e *qsi*
 - [x] Escolha entre continuo ou digital
 
 ### 2ª Parte
-- [ ] Gerar pontos para plotagem dos gráficos 
-  - [ ] Degrau
-  - [ ] Bode
-  - [ ] LGR
+- [x] Gerar pontos para plotagem dos gráficos 
+  - [x] Degrau
+  - [x] Bode
+  - [x] LGR
 
 ### 3ª Parte
-- [ ] Envio dos pontos para plotagem do gráfico na página
-- [ ] Plotagem dos grafos
-- [ ] Possibilidade de download dos gráficos
+- [x] Envio dos pontos para plotagem do gráfico na página
+- [x] Plotagem dos grafos
+- [x] Possibilidade de download dos gráficos
+- [ ] Fazer Documentação em Latex
+
+### Extra
+- [ ] Refinar código
+- [ ] Estilizar (CSS)
