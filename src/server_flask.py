@@ -56,43 +56,73 @@ def salvar_valores():
         kp = float(dados.get('kp', 0))
         kd = float(dados.get('kd', 0))
         ki = float(dados.get('ki', 0))
-        tau = float(dados.get('tau', 0.01))  # Valor padrão 
-        qsi = float(dados.get('qsi', 0.5))  # Valor padrão 
+        tau = float(dados.get('tau', 0.01))  # Valor padrão
+        qsi = float(dados.get('qsi', 0.5))  # Valor padrão
         modo = dados.get('modo', 'continua')
 
+        # Verificar tempo de amostragem
         if modo == 'digital':
             try:
                 tempo = float(dados.get('tempo', 0.1))
             except ValueError:
                 tempo = 0.1
         else:
-            tempo = 0.1
+            tempo = 0.01  # Tempo de amostragem padrão para contínuo
 
         # Numerador e denominador para a função de transferência G(s)
         num = [kd, kp, ki]
         den = [1/(tau**2), 2*qsi/tau, 1]
-        
-        sistema = signal.TransferFunction(num, den)
 
-        # Cálculo da resposta em frequência (Bode)
-        w, mag, fase = signal.bode(sistema)
+        if modo == 'digital':
+            # Discretizar o sistema para modo digital
+            sistema = signal.cont2discrete((num, den), tempo, method='zoh')
+            num_d, den_d = sistema[0], sistema[1]
+            sistema_discreto = signal.dlti(num_d, den_d)
+            
+            # Cálculo da resposta em frequência (Bode) para sistema digital
+            w, mag, fase = signal.dlti(num_d, den_d).bode()
+            
+            # Cálculo da resposta ao degrau
+            t, yout = signal.dstep(sistema_discreto)
+            t = np.array(t).flatten()
+            yout = np.array(yout).flatten()
 
-        # Cálculo da resposta ao degrau
-        t, yout = signal.step(sistema)
+            # Cálculo do Lugar das Raízes (LDR) para sistema digital
+            k = np.linspace(0, 10, num=500)
+            rlist = []
+            for k_val in k:
+                num_k = [x * k_val for x in num_d]
+                sistema_k = signal.dlti(num_k, den_d)
+                poles = np.roots(sistema_k.den)
+                rlist.append(poles.real.tolist())  # Converta para lista
 
-        # Cálculo do Lugar das Raízes (LDR)
-        k = np.linspace(0, 10, num=500)
-        rlist = []
-        for k_val in k:
-            num_k = [x * k_val for x in num]
-            sistema_k = signal.TransferFunction(num_k, den)
-            poles = np.roots(sistema_k.den)
-            rlist.append(poles.real.tolist())  # Converta para lista -> ChatGPT fez esta linha!
+            dados_bode = {'frequencia': w.tolist(), 'magnitude': mag.tolist(), 'fase': fase.tolist()}
+            dados_ldr = {'raizes': rlist, 'ganhos': k.tolist()}
 
-        # Preparando os dados para serem enviados ao frontend
-        dados_bode = {'frequencia': w.tolist(), 'magnitude': mag.tolist(), 'fase': fase.tolist()}
+        else:
+            # Sistema contínuo
+            sistema = signal.TransferFunction(num, den)
+            
+            # Cálculo da resposta em frequência (Bode)
+            w, mag, fase = signal.bode(sistema)
+            
+            # Cálculo da resposta ao degrau
+            t, yout = signal.step(sistema)
+
+            # Cálculo do Lugar das Raízes (LDR)
+            k = np.linspace(0, 10, num=500)
+            rlist = []
+            for k_val in k:
+                num_k = [x * k_val for x in num]
+                sistema_k = signal.TransferFunction(num_k, den)
+                poles = np.roots(sistema_k.den)
+                rlist.append(poles.real.tolist())  # Converta para lista
+
+            dados_bode = {'frequencia': w.tolist(), 'magnitude': mag.tolist(), 'fase': fase.tolist()}
+            dados_degrau = {'tempo': t.tolist(), 'resposta': yout.tolist()}
+            dados_ldr = {'raizes': rlist, 'ganhos': k.tolist()}
+
         dados_degrau = {'tempo': t.tolist(), 'resposta': yout.tolist()}
-        dados_ldr = {'raizes': rlist, 'ganhos': k.tolist()}
 
         return jsonify({'bode': dados_bode, 'degrau': dados_degrau, 'ldr': dados_ldr})
     
