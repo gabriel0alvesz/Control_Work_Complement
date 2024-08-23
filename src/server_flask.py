@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, render_template
-import socket
 
 app = Flask(__name__)
 
@@ -47,27 +46,23 @@ def salvar_ki():
     ki = request.json.get('valor')
     return jsonify({'status': 'ok', 'ki': ki})
 
-@app.route('/enviar-valores', methods=['POST'])
-def enviar_valores():
+@app.route('/salvar-valores', methods=['POST'])
+def salvar_valores():
     global kp, kd, ki, tau, qsi, tempo, modo_operacao
     modo_operacao = request.json.get('modo')
     tempo = request.json.get('tempo')
     tau = request.json.get('tau')
     qsi = request.json.get('qsi')
-
-    # Configurações do servidor TCP (o mesmo que o servidor_tcp.py)
-    tcp_server_host = '127.0.0.1'
-    tcp_server_port = 3333
-
-    # Conectar ao servidor TCP e enviar os valores
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((tcp_server_host, tcp_server_port))
-        message = (f"Modo: {modo_operacao}, Kp: {kp}, Kd: {kd}, Ki: {ki}, "
-                   f"Tau: {tau}, Qsi: {qsi}, Tempo: {tempo}\n")
-        s.sendall(message.encode('utf-8'))
-        data = s.recv(1024).decode('utf-8')
-
-    return jsonify({'mensagem': 'Valores enviados com sucesso!', 'resposta': data})
+    return jsonify({
+        'status': 'ok',
+        'modo': modo_operacao,
+        'tempo': tempo,
+        'tau': tau,
+        'qsi': qsi,
+        'kp': kp,
+        'kd': kd,
+        'ki': ki
+    })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000)

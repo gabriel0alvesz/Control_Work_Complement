@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Sistema</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/static/control.js"></script>
 </head>
 <body>
     <h1>Controle de Sistema</h1>
@@ -38,67 +39,10 @@
     <label for="qsi">Qsi:</label>
     <input type="number" id="qsi" step="0.01"><br>
 
-    <button onclick="enviarValores()">Enviar</button>
+    <button onclick="enviarValores()">Enviar</button><br><br>
 
-    <script>
-        function ajustarVisibilidadeTempo() {
-            var modo = document.getElementById("modo").value;
-            var tempoDiv = document.getElementById("tempoDiv");
-            if (modo === "digital") {
-                tempoDiv.style.display = "block";
-            } else {
-                tempoDiv.style.display = "none";
-            }
-        }
+    <h2>Valores Salvos:</h2>
+    <p id="valores"></p>
 
-        function salvarValor(param) {
-            var valor = document.getElementById(param).value;
-            $.ajax({
-                url: `/salvar-${param}`,
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ valor: valor }),
-                success: function(response) {
-                    alert(param.toUpperCase() + ' salvo com sucesso!');
-                }
-            });
-        }
-
-        function enviarValores() {
-            var modo = document.getElementById("modo").value;
-            var tempo = document.getElementById("tempo").value;
-            var tau = document.getElementById("tau").value;
-            var qsi = document.getElementById("qsi").value;
-
-            $.ajax({
-                url: '/enviar-valores',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    modo: modo,
-                    tempo: tempo,
-                    tau: tau,
-                    qsi: qsi
-                }),
-                success: function(response) {
-                    alert('Valores enviados com sucesso!');
-                }
-            });
-        }
-
-        function atualizarPotenciometro() {
-            $.ajax({
-                url: '/atualizar-potenciometro',
-                type: 'GET',
-                success: function(response) {
-                    $('#kp').val(response.valor);
-                    $('#kd').val(response.valor);
-                    $('#ki').val(response.valor);
-                }
-            });
-        }
-
-        setInterval(atualizarPotenciometro, 1000); // Atualiza a cada 1 segundo
-    </script>
 </body>
 </html>
