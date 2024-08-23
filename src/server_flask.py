@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
-import socket
-from math import log10, atan, pi
+from scipy import signal
+import numpy as np
 
 app = Flask(__name__)
 
@@ -11,6 +11,7 @@ ki = 0
 tau = 0.0
 qsi = 0.0
 tempo = 0.0
+valor_corrigido = 0.0
 modo_operacao = "continua"
 
 @app.route('/')
@@ -26,7 +27,7 @@ def atualizar_potenciometro():
 def receber_potenciometro():
     global valor_corrigido
     valor_potenciometro = request.json.get('valor')
-    valor_corrigido = round(valor_potenciometro / 4095, 3)
+    valor_corrigido = round((3*valor_potenciometro) / 4095, 3)
     return jsonify({'status': 'ok', 'valor_recebido': valor_corrigido})
 
 @app.route('/salvar-kp', methods=['POST'])
@@ -49,40 +50,55 @@ def salvar_ki():
 
 @app.route('/salvar-valores', methods=['POST'])
 def salvar_valores():
-    global kp, kd, ki, tau, qsi, tempo, modo_operacao
+    dados = request.json
 
-    modo_operacao = request.json.get('modo')
-    tau = float(request.json.get('tau', 0))  # Converter para float
-    qsi = float(request.json.get('qsi', 0))  # Converter para float
+    try:
+        kp = float(dados.get('kp', 0))
+        kd = float(dados.get('kd', 0))
+        ki = float(dados.get('ki', 0))
+        tau = float(dados.get('tau', 0.01))  # Valor padrão 
+        qsi = float(dados.get('qsi', 0.5))  # Valor padrão 
+        modo = dados.get('modo', 'continua')
 
-    tempo_str = request.json.get('tempo', '')
-    if modo_operacao == "continua":
-        tempo = 0.01
-    elif tempo_str:
-        try:
-            tempo = float(tempo_str)  # Converter para float se digital
-        except ValueError:
-            tempo = 0.01  # Defina um valor padrão se a conversão falhar
-    else:
-        tempo = 0.01  # Defina um valor padrão se o campo estiver vazio
+        if modo == 'digital':
+            try:
+                tempo = float(dados.get('tempo', 0.1))
+            except ValueError:
+                tempo = 0.1
+        else:
+            tempo = 0.1
 
-    # Cálculo para gráfico de Bode e resposta ao degrau
-    a = [1, qsi + tau, tau * qsi]  # Agora qsi e tau são floats
-    b = [1, 0]  # Exemplo simplificado para Bode
-    frequencias = [0.1, 1, 10, 100]  # Exemplo de frequências
-    magnitude = [20 * log10(abs(1 / (tau * f))) for f in frequencias]
-    fase = [-atan(tau * f) * 180 / pi for f in frequencias]
+        # Numerador e denominador para a função de transferência G(s)
+        num = [kd, kp, ki]
+        den = [1/(tau**2), 2*qsi/tau, 1]
+        
+        sistema = signal.TransferFunction(num, den)
 
-    tempo_degrau = [0, 1, 2, 3, 4]  # Exemplo de tempo
-    resposta_degrau = [0, 1, 1.5, 1.8, 2]  # Exemplo de resposta ao degrau
+        # Cálculo da resposta em frequência (Bode)
+        w, mag, fase = signal.bode(sistema)
 
-    return jsonify({
-        'kp': kp,
-        'kd': kd,
-        'ki': ki,
-        'bode': {'frequencias': frequencias, 'magnitude': magnitude, 'fase': fase},
-        'degrau': {'tempo': tempo_degrau, 'resposta': resposta_degrau}
-    })
+        # Cálculo da resposta ao degrau
+        t, yout = signal.step(sistema)
+
+        # Cálculo do Lugar das Raízes (LDR)
+        k = np.linspace(0, 10, num=500)
+        rlist = []
+        for k_val in k:
+            num_k = [x * k_val for x in num]
+            sistema_k = signal.TransferFunction(num_k, den)
+            poles = np.roots(sistema_k.den)
+            rlist.append(poles.real.tolist())  # Converta para lista -> ChatGPT fez esta linha!
+
+        # Preparando os dados para serem enviados ao frontend
+        dados_bode = {'frequencia': w.tolist(), 'magnitude': mag.tolist(), 'fase': fase.tolist()}
+        dados_degrau = {'tempo': t.tolist(), 'resposta': yout.tolist()}
+        dados_ldr = {'raizes': rlist, 'ganhos': k.tolist()}
+
+        return jsonify({'bode': dados_bode, 'degrau': dados_degrau, 'ldr': dados_ldr})
+    
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000)
