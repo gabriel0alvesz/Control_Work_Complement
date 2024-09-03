@@ -4,46 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Sistema</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="/static/control.js"></script>
 </head>
-<body>
-    <h1>Controle de Sistema</h1>
+<body class="container my-5">
+    <h1 class="text-center mb-4">Controle de Sistema</h1>
 
-    <label for="modo">Modo de Operação:</label>
-    <select id="modo">
-        <option value="continua">Contínua</option>
-        <option value="digital">Digital</option>
-    </select>
+    <div class="mb-3">
+        <label for="modo" class="form-label">Modo de Operação:</label>
+        <select id="modo" class="form-select">
+            <option value="continua">Contínua</option>
+            <option value="digital">Digital</option>
+        </select>
+    </div>
 
-    <div id="tempoDiv" style="display: none;">
-        <label for="tempo">Tempo (segundos):</label>
-        <input type="number" id="tempo" step="0.1" min="0">
-    </div><br>
+    <div id="tempoDiv" class="mb-3" style="display: none;">
+        <label for="tempo" class="form-label">Tempo (segundos):</label>
+        <input type="number" id="tempo" class="form-control" step="0.1" min="0">
+    </div>
 
-    <label for="kp">Kp:</label>
-    <input type="number" id="kp" readonly>
-    <button onclick="salvarValor('kp')">Salvar Kp</button><br>
+    <div class="mb-3">
+        <label for="kp" class="form-label">Kp:</label>
+        <div class="input-group">
+            <input type="number" id="kp" class="form-control" readonly>
+            <button class="btn btn-primary" onclick="salvarValor('kp')">Salvar Kp</button>
+        </div>
+    </div>
 
-    <label for="kd">Kd:</label>
-    <input type="number" id="kd" readonly>
-    <button onclick="salvarValor('kd')">Salvar Kd</button><br>
+    <div class="mb-3">
+        <label for="kd" class="form-label">Kd:</label>
+        <div class="input-group">
+            <input type="number" id="kd" class="form-control" readonly>
+            <button class="btn btn-primary" onclick="salvarValor('kd')">Salvar Kd</button>
+        </div>
+    </div>
 
-    <label for="ki">Ki:</label>
-    <input type="number" id="ki" readonly>
-    <button onclick="salvarValor('ki')">Salvar Ki</button><br>
+    <div class="mb-3">
+        <label for="ki" class="form-label">Ki:</label>
+        <div class="input-group">
+            <input type="number" id="ki" class="form-control" readonly>
+            <button class="btn btn-primary" onclick="salvarValor('ki')">Salvar Ki</button>
+        </div>
+    </div>
 
-    <label for="tau">Tau:</label>
-    <input type="number" id="tau" step="0.01"><br>
+    <div class="mb-3">
+        <label for="tau" class="form-label">Tau:</label>
+        <input type="number" id="tau" class="form-control" step="0.01">
+    </div>
 
-    <label for="qsi">Qsi:</label>
-    <input type="number" id="qsi" step="0.01"><br>
+    <div class="mb-3">
+        <label for="qsi" class="form-label">Qsi:</label>
+        <input type="number" id="qsi" class="form-control" step="0.01">
+    </div>
 
-    <button id="enviar">Enviar</button>
+    <div class="d-grid">
+        <button id="enviar" class="btn btn-success">Enviar</button>
+    </div>
 
-    <div id="graficoBode" style="width: 900px; height: 600px;"></div>
-    <div id="graficoDegrau" style="width: 900px; height: 600px;"></div>
-    <div id="graficoLDR" style="width: 900px; height: 600px;"></div>
+    <div id="graficoBode" class="my-4" style="width: 900px; height: 600px;"></div>
+    <div id="graficoDegrau" class="my-4" style="width: 900px; height: 600px;"></div>
+    <div id="graficoLDR" class="my-4" style="width: 900px; height: 600px;"></div>
 </body>
 </html>
