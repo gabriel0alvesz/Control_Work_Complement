@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from scipy import signal
 import numpy as np
+import serial
 
 app = Flask(__name__)
 
@@ -14,6 +15,9 @@ tempo = 0.0
 valor_corrigido = 0.0
 modo_operacao = "continua"
 
+# Inicializa a conexão serial
+ser = serial.Serial('/dev/tty.usbserial-0001', 115200)  # Atualize para a porta correta
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -21,14 +25,18 @@ def index():
 @app.route('/atualizar-potenciometro', methods=['GET'])
 def atualizar_potenciometro():
     global valor_corrigido
+    if ser.in_waiting > 0:
+        try:
+            linha = ser.readline().decode('utf-8').strip()
+            valor_corrigido = round((3 * int(linha)) / 4095, 3)
+            # print(valor_corrigido)
+        except ValueError:
+            pass
+        
     return jsonify({'valor': valor_corrigido})
 
-@app.route('/receber-potenciometro', methods=['POST'])
-def receber_potenciometro():
-    global valor_corrigido
-    valor_potenciometro = request.json.get('valor')
-    valor_corrigido = round((3*valor_potenciometro) / 4095, 3)
-    return jsonify({'status': 'ok', 'valor_recebido': valor_corrigido})
+# def ler_dados_serial():
+    
 
 @app.route('/salvar-kp', methods=['POST'])
 def salvar_kp():
@@ -110,7 +118,7 @@ def salvar_valores():
             t, yout = signal.step(sistema)
 
             # Cálculo do Lugar das Raízes (LDR)
-            k = np.linspace(0, 10, num=500)
+            k = np.linspace(0, 10, num=100)
             rlist = []
             for k_val in k:
                 num_k = [x * k_val for x in num]
