@@ -6,16 +6,15 @@
     <title>Controle de Sistema</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="/static/control.js"></script>
+    <script src="static/control.js"></script>
 </head>
 <body class="container my-5">
-    <h1 class="text-center mb-4">Controle de Sistema</h1>
+    <h1 class="text-center mb-4">Controle de Sistemas PID</h1>
 
     <div class="mb-3">
         <label for="modo" class="form-label">Modo de Operação:</label>
         <select id="modo" class="form-select">
-            <option value="continua">Contínua</option>
+            <option value="continuo">Contínua</option>
             <option value="digital">Digital</option>
         </select>
     </div>
@@ -23,6 +22,28 @@
     <div id="tempoDiv" class="mb-3" style="display: none;">
         <label for="tempo" class="form-label">Tempo (segundos):</label>
         <input type="number" id="tempo" class="form-control" step="0.1" min="0">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Tipo de Controle:</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="tipoControle" id="controlePID" value="PID" checked>
+            <label class="form-check-label" for="controlePID">
+                PID
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="tipoControle" id="controlePI" value="PI">
+            <label class="form-check-label" for="controlePI">
+                PI
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="tipoControle" id="controlePD" value="PD">
+            <label class="form-check-label" for="controlePD">
+                PD
+            </label>
+        </div>
     </div>
 
     <div class="mb-3">
@@ -63,7 +84,9 @@
         <button id="enviar" class="btn btn-success">Enviar</button>
     </div>
 
-    <div id="graficoBode" class="my-4" style="width: 900px; height: 600px;"></div>
+    <div id="graficoBode" class="my-4" style="width: 900px; height: 600px;">
+        <img id="bodeImage" src="">
+    </div>
     <div id="graficoDegrau" class="my-4" style="width: 900px; height: 600px;"></div>
     <div id="graficoLDR" class="my-4" style="width: 900px; height: 600px;"></div>
 </body>
