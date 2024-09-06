@@ -5,89 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Sistema</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/index.css"> <!-- Importação do arquivo CSS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="static/control.js"></script>
 </head>
 <body class="container my-5">
-    <h1 class="text-center mb-4">Controle de Sistemas PID</h1>
+    <div class="form-container">
+        <h2 class="text-left mb-4">Controle de Sistemas PID</h2>
 
-    <div class="mb-3">
-        <label for="modo" class="form-label">Modo de Operação:</label>
-        <select id="modo" class="form-select">
-            <option value="continuo">Contínua</option>
-            <option value="digital">Digital</option>
-        </select>
-    </div>
-
-    <div id="tempoDiv" class="mb-3" style="display: none;">
-        <label for="tempo" class="form-label">Tempo (segundos):</label>
-        <input type="number" id="tempo" class="form-control" step="0.1" min="0">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Tipo de Controle:</label>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="tipoControle" id="controlePID" value="PID" checked>
-            <label class="form-check-label" for="controlePID">
-                PID
-            </label>
+        <div class="mb-3">
+            <label for="modo" class="form-label">Modo de Operação:</label>
+            <select id="modo" class="form-select">
+                <option value="continuo">Contínuo</option>
+                <option value="digital">Digital</option>
+            </select>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="tipoControle" id="controlePI" value="PI">
-            <label class="form-check-label" for="controlePI">
-                PI
-            </label>
+
+        <div id="tempoDiv" class="mb-3" style="display: none;">
+            <label for="tempo" class="form-label">Tempo (segundos):</label>
+            <input type="number" id="tempo" class="form-control" step="0.1" min="0">
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="tipoControle" id="controlePD" value="PD">
-            <label class="form-check-label" for="controlePD">
-                PD
-            </label>
+
+        <div class="mb-3">
+            <label class="form-label">Tipo de Controle:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipoControle" id="controlePID" value="PID" checked>
+                <label class="form-check-label" for="controlePID">PID</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipoControle" id="controlePI" value="PI">
+                <label class="form-check-label" for="controlePI">PI</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipoControle" id="controlePD" value="PD">
+                <label class="form-check-label" for="controlePD">PD</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="kp" class="form-label">Kp:</label>
+            <div class="input-group">
+                <input type="number" id="kp" class="form-control" readonly>
+                <button id="kp-btn" class="btn btn-primary" onclick="salvarValor('kp')">Salvar Kp</button>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="ki" class="form-label">Ki:</label>
+            <div class="input-group">
+                <input type="number" id="ki" class="form-control" readonly>
+                <button id="ki-btn" class="btn btn-primary" onclick="salvarValor('ki')">Salvar Ki</button>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="kd" class="form-label">Kd:</label>
+            <div class="input-group">
+                <input type="number" id="kd" class="form-control" readonly>
+                <button id="kd-btn" class="btn btn-primary" onclick="salvarValor('kd')">Salvar Kd</button>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="tau" class="form-label">Tau:</label>
+            <input type="number" id="tau" class="form-control" step="0.01">
+        </div>
+
+        <div class="d-grid button-container">
+            <button id="enviar" class="btn btn-success">Enviar</button>
+            <button id="reset" class="btn btn-secondary btn-reset">Reset</button>
+        </div>
+        
+        <div id="exibeValoresFinais" style="font-size: large; color: blueviolet;">
+            <span></span>
         </div>
     </div>
 
-    <div class="mb-3">
-        <label for="kp" class="form-label">Kp:</label>
-        <div class="input-group">
-            <input type="number" id="kp" class="form-control" readonly>
-            <button class="btn btn-primary" onclick="salvarValor('kp')">Salvar Kp</button>
+    <div class="graph-container">
+        <div id="graficoBode" class="my-4">
+            <img id="bodeImage" src="">
+        </div>
+        <div id="graficoDegrau" class="my-4">
+            <img id="degrauImage" src="">
+        </div>
+        <div id="graficoLDR" class="my-4">
+            <img id="lgrImage" src="">
         </div>
     </div>
-
-    <div class="mb-3">
-        <label for="kd" class="form-label">Kd:</label>
-        <div class="input-group">
-            <input type="number" id="kd" class="form-control" readonly>
-            <button class="btn btn-primary" onclick="salvarValor('kd')">Salvar Kd</button>
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label for="ki" class="form-label">Ki:</label>
-        <div class="input-group">
-            <input type="number" id="ki" class="form-control" readonly>
-            <button class="btn btn-primary" onclick="salvarValor('ki')">Salvar Ki</button>
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label for="tau" class="form-label">Tau:</label>
-        <input type="number" id="tau" class="form-control" step="0.01">
-    </div>
-
-    <div class="mb-3">
-        <label for="qsi" class="form-label">Qsi:</label>
-        <input type="number" id="qsi" class="form-control" step="0.01">
-    </div>
-
-    <div class="d-grid">
-        <button id="enviar" class="btn btn-success">Enviar</button>
-    </div>
-
-    <div id="graficoBode" class="my-4" style="width: 900px; height: 600px;">
-        <img id="bodeImage" src="">
-    </div>
-    <div id="graficoDegrau" class="my-4" style="width: 900px; height: 600px;"></div>
-    <div id="graficoLDR" class="my-4" style="width: 900px; height: 600px;"></div>
 </body>
 </html>
