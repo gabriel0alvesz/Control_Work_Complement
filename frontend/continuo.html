@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Contínuo</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles/pages.css" media="screen" />
+</head>
+<body>
+    <div class="container">
+        <button onclick="goBack()" class="btn btn-light btn-custom">Voltar</button>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="container-box">
+                    <h3>Sistema Contínuo</h3>
+                    <form id="continuoForm">
+                        <div class="form-group">
+                            <label for="K">K (Ganho)</label>
+                            <input type="number" class="form-control" id="K">
+                        </div>
+                        <div class="form-group">
+                            <label for="Kp">Kp</label>
+                            <input type="number" class="form-control" id="Kp">
+                        </div>
+                        <div class="form-group">
+                            <label for="Ki">Ki</label>
+                            <input type="number" class="form-control" id="Ki">
+                        </div>
+                        <div class="form-group">
+                            <label for="Kd">Kd</label>
+                            <input type="number" class="form-control" id="Kd">
+                        </div>
+                        <div class="form-group">
+                            <label for="TAU">TAU</label>
+                            <input type="number" class="form-control" id="TAU">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Tipo</label>
+                            <select id="tipo" class="form-control">
+                                <option value="PID">PID</option>
+                                <option value="PI">PI</option>
+                                <option value="PD">PD</option>
+                                <option value="P">P</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="enviarDadosContinuo()">Enviar</button>
+                        <button type="button" class="btn btn-reset" onclick="resetarForm('continuoForm')">Resetar</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="scrollable-graph-container">
+                    <div class="graph-container" id="bodeGraph">Gráfico de Bode</div>
+                    <div class="graph-container mt-3" id="stepGraph">Gráfico de Resposta ao Degrau</div>
+                    <div class="graph-container mt-3" id="rootGraph">Gráfico de Lugar das Raízes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/functions.js"></script>
+</body>
+</html>

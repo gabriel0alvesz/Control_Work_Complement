@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+    <div class="container-box">
+        <img src="assets/cefet_logo.png" alt="Logo da Faculdade" class="img-fluid" style="max-width: 150px;">
+        <h3 class="my-4">Sistema de Controle PID</h3>
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-primary" onclick="redirect('continuo')">Modo Contínuo</button>
+            <button class="btn btn-secondary" onclick="redirect('discreto')">Modo Discreto</button>
+        </div>
+    </div>
+    <footer>
+        <p>Desenvolvido por Gabriel Oliveira Alves - <a href="https://github.com/gabriel0alvesz">Github</a></p>
+    </footer>
+
+    <script src="src/functions.js"></script>
+</body>
+</html>

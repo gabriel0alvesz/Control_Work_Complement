@@ -1,0 +1,24 @@
+body {
+    background: linear-gradient(to bottom right, #003869, #ffffff);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-box {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 400px;
+}
+
+footer {
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+    width: 100%;
+    color: #fff;
+}
