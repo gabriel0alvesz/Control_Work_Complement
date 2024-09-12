@@ -11,7 +11,7 @@ body {
 }
 
 .scrollable-graph-container {
-    max-height: 700px; /* Ajuste conforme necessário */
+    max-height: 100%; /* Ajuste conforme necessário */
     overflow-y: auto;
     padding-right: 15px; /* Para o espaço de rolagem */
     scrollbar-width: none

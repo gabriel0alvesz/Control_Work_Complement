@@ -40,6 +40,7 @@ void loop() {
 
   // Se a tecla 'A' for pressionada, iniciar ajuste do potenciômetro
   if (key == 'A') {
+    Serial.println("1 - Kp \t2 - Ki \t3 - Kd");
     parametroSelecionado = selecionarParametro();
     if (parametroSelecionado != '\0') {
       ajustandoPotenciometro = true;
@@ -71,21 +72,28 @@ void loop() {
   if(key == '#'){
     if (parametroSelecionado == 'P') {
       Kp = current_value;
+      Serial.printf("Enviando...");
+      Serial.println(Kp);
     } else if (parametroSelecionado == 'I') {
       Ki = current_value;
+      Serial.printf("Enviando...");
+      Serial.println(Ki);
     } else if (parametroSelecionado == 'D') {
       Kd = current_value;
+      Serial.printf("Enviando...");
+      Serial.println(Kd);
     }
     ajustandoPotenciometro = false;
   }
 
   if (key == 'B') {
-    // Enviar o valor atualizado via Serial
+    Serial.println("Enviando Json com os dados de Kp, Ki, e Kd");
     enviarDadosGanhos(Kp, Ki, Kd);
   }
 
 
   if (key == 'C'){
+    Serial.println("1 - K \t2 - TAU \t3 - Tempo");
     ajustesExtras = true;
   }
     
@@ -94,23 +102,29 @@ void loop() {
 
     if (parametroSelecionado == 'K') {
       K = receberValorTeclado('K');
+      Serial.printf("Valor de K salvo: ");
+      Serial.println(K);
       ajustesExtras = false;
     } else if (parametroSelecionado == 'U') {
       U = receberValorTeclado('U');
+      Serial.printf("Valor de Tau salvo: ");
+      Serial.println(U);
       ajustesExtras = false;
     } else if (parametroSelecionado == 'T') {
       T = receberValorTeclado('T');
+      Serial.printf("Valor de Tempo salvo: ");
+      Serial.println(T);
       ajustesExtras = false;
     }
   }
   
-  // Envio dos dados (exemplo)
+  
   if (key == 'D') {
     enviarDadosVariaveis(K, U, T);
   }
 }
 
-// Função para selecionar qual parâmetro (Kp, Ki ou Kd) ajustar
+
 char selecionarParametro() {
   char param = '\0';
   while (param == '\0') {
@@ -118,9 +132,9 @@ char selecionarParametro() {
     if (key == '1') param = 'P'; // Seleciona Kp
     if (key == '2') param = 'I'; // Seleciona Ki
     if (key == '3') param = 'D'; // Seleciona Kd
-    if (key == '4') param = 'K'; // Seleciona Kd
-    if (key == '5') param = 'U'; // Seleciona Kd
-    if (key == '6') param = 'T'; // Seleciona Kd
+    if (key == '4') param = 'K'; // Seleciona Ganho
+    if (key == '5') param = 'U'; // Seleciona TAU
+    if (key == '6') param = 'T'; // Seleciona Tempo de Amostragem
   }
   return param;
 }
