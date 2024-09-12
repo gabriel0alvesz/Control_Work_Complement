@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/gabrielmac/Desktop/ControleDigital/CDSD"
+VIRTUAL_ENV="/Users/gabrielmac/Desktop/ServidorPython/Control_Work_Complement/CDSD"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

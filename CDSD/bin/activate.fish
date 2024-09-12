@@ -29,7 +29,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/gabrielmac/Desktop/ControleDigital/CDSD"
+set -gx VIRTUAL_ENV "/Users/gabrielmac/Desktop/ServidorPython/Control_Work_Complement/CDSD"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

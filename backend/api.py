@@ -1,9 +1,47 @@
 from flask import Flask, request, jsonify
+import threading
+import serial  # Adiciona a biblioteca pySerial
+import time
+import json
 from flask_cors import CORS
 import control_functions as cf
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
+
+
+ser = serial.Serial('/dev/tty.usbserial-0001', 115200)
+
+# Variáveis globais para armazenar os dados recebidos da serial
+serial_data = {}
+
+def ler_dados_serial():
+    
+    global serial_data
+    while True:
+        if ser.in_waiting > 0:
+            try:
+                
+                linha_serial = ser.readline().decode('utf-8').strip()
+                
+
+            except Exception as e:
+                print(f"Erro ao ler dados da serial: {e}")
+        time.sleep(0.1)  # evita sobrecarregar a CPU
+
+threading.Thread(target=ler_dados_serial, daemon=True).start()
+
+# # Rota para o front-end obter os dados seriais
+# @app.route('/api/serial-data', methods=['GET'])
+# def get_serial_data():
+#     """
+#     Retorna os dados mais recentes recebidos da porta serial.
+#     """
+#     if serial_data:
+#         return jsonify(serial_data)
+#     else:
+#         return jsonify({'error': 'Nenhum dado recebido ainda'}), 400
+
 
 # Rota para o sistema contínuo
 @app.route('/api/continuo', methods=['POST'])
